@@ -15,6 +15,12 @@ class AuthViewModel @ViewModelInject constructor(private val repository: Reposit
     private val _registerStatus = MutableLiveData<Resource<String>>()
     val registerStatus: LiveData<Resource<String>> = _registerStatus
 
+    private val _loginStatus = MutableLiveData<Resource<String>>()
+    val loginStatus: LiveData<Resource<String>> = _loginStatus
+
+
+
+
     fun registerRestaurantOwner(email: String, password: String, confirmPassword: String) {
         _registerStatus.postValue(Resource.loading(null))
 
@@ -47,5 +53,17 @@ class AuthViewModel @ViewModelInject constructor(private val repository: Reposit
 
     }
 
+    fun loginRestaurant(email: String, password: String) {
+        _loginStatus.postValue(Resource.loading(null))
+
+        if(email.isEmpty() || password.isEmpty()) {
+            _loginStatus.postValue(Resource.error("Please, fill out all the fields", null))
+            return
+        }
+        viewModelScope.launch {
+            val result = repository.login(email, password)
+            _loginStatus.postValue(result)
+        }
+    }
 
 }

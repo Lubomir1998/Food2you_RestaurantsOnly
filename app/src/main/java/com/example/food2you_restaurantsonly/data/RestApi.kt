@@ -14,6 +14,9 @@ interface RestApi {
     @POST("/registerRestaurant")
     suspend fun registerRestaurant(@Body accountRequest: AccountRequest): Response<SimpleResponse>
 
+    @POST("/loginRes")
+    suspend fun loginRes(@Body accountRequest: AccountRequest): Response<SimpleResponse>
+
     @POST("/addRestaurant")
     suspend fun insertRestaurant(@Body restaurant: Restaurant): Response<ResponseBody>
 

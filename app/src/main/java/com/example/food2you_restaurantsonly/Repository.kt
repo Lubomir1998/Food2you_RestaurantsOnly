@@ -24,4 +24,19 @@ class Repository @Inject constructor(private val api: RestApi) {
         }
     }
 
+    suspend fun login(email: String, password: String) = withContext(Dispatchers.IO) {
+        try {
+            val response = api.loginRes(AccountRequest(email, password))
+            if(response.isSuccessful && response.body()!!.isSuccessful) {
+                Resource.success(response.body()?.message)
+            }
+            else {
+                Resource.error( response.body()?.message ?: response.message(), null)
+            }
+        }
+        catch (e: Exception) {
+            Resource.error( "Couldn't connect to servers. Check your internet connection", null)
+        }
+    }
+
 }
