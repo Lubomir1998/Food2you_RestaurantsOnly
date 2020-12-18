@@ -1,7 +1,10 @@
-package com.example.food2you_restaurantsonly.data.entities
+package com.example.food2you_restaurantsonly.data.local.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
+@Entity
 data class Restaurant(
     val name: String,
     val type: String,
@@ -12,6 +15,7 @@ data class Restaurant(
     val imgUrl: String,
     val previews: List<String>,
     val users: List<String>,
-    val owners: List<String>,
+    val owner: String,
+    @PrimaryKey(autoGenerate = false)
     val id: String = UUID.randomUUID().toString()
 )

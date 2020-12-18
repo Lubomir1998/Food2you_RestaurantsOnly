@@ -2,10 +2,13 @@ package com.example.food2you_restaurantsonly.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.food2you_restaurantsonly.data.local.DbHelper
 import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
-import com.example.food2you_restaurantsonly.data.RestApi
+import com.example.food2you_restaurantsonly.data.remote.RestApi
 import com.example.food2you_restaurantsonly.other.Constants.ENCRYPTED_SHARED_PREFS_NAME
 import dagger.Module
 import dagger.Provides
@@ -20,6 +23,22 @@ import javax.inject.Singleton
 @Module
 @InstallIn(ApplicationComponent::class)
 object AppModule {
+
+
+    @Singleton
+    @Provides
+    fun provideDb(@ApplicationContext context: Context) = Room.databaseBuilder(
+        context,
+        DbHelper::class.java,
+        "my_db"
+    )
+        .fallbackToDestructiveMigration()
+        .build()
+
+
+    @Singleton
+    @Provides
+    fun provideDao(db: DbHelper) = db.getDao()
 
 
     @Singleton

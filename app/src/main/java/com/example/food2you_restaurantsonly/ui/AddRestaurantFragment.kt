@@ -5,14 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.food2you_restaurantsonly.R
 import com.example.food2you_restaurantsonly.databinding.AddRestaurantFragmentBinding
 import com.example.food2you_restaurantsonly.databinding.LoginFragmentBinding
+import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
 
     private lateinit var binding: AddRestaurantFragmentBinding
+    private val model: AddRestaurantViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,8 +32,8 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.backArrowImg.setOnClickListener {
-            findNavController().navigate(R.id.action_addRestaurantFragment_to_myRestaurantsFragment)
+        binding.addBtn.setOnClickListener {
+
         }
 
     }

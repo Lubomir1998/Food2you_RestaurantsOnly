@@ -1,4 +1,4 @@
-package com.example.food2you_restaurantsonly.data.requests
+package com.example.food2you_restaurantsonly.data.remote.requests
 
 data class AccountRequest(
     val email: String,
