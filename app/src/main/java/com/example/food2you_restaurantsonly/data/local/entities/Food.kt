@@ -12,8 +12,8 @@ data class Food(
     val weight: Int,
     val imgUrl: String,
     val price: Float,
-    @Expose(serialize = false, deserialize = false)
-    var isInBasket: Boolean = false,
+//    @Expose(serialize = false, deserialize = false)
+//    var isInBasket: Boolean = false,
     val restaurantName: String,
     @PrimaryKey(autoGenerate = false)
     val id: String = UUID.randomUUID().toString()

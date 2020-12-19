@@ -1,5 +1,6 @@
 package com.example.food2you_restaurantsonly.ui
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +14,16 @@ import com.example.food2you_restaurantsonly.databinding.AddRestaurantFragmentBin
 import com.example.food2you_restaurantsonly.databinding.LoginFragmentBinding
 import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
 
     private lateinit var binding: AddRestaurantFragmentBinding
     private val model: AddRestaurantViewModel by viewModels()
+
+    @Inject
+    lateinit var sharedPrefs: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +39,10 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
 
         binding.addBtn.setOnClickListener {
 
+        }
+
+        binding.addFoodBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_addRestaurantFragment_to_addMealFragment)
         }
 
     }

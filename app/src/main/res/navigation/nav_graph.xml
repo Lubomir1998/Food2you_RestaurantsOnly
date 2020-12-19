@@ -30,12 +30,8 @@
         android:name="com.example.food2you_restaurantsonly.ui.AddRestaurantFragment"
         android:label="AddRestaurantFragment" >
         <action
-            android:id="@+id/action_addRestaurantFragment_to_myRestaurantsFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left"
-            app:destination="@id/myRestaurantsFragment" />
+            android:id="@+id/action_addRestaurantFragment_to_addMealFragment"
+            app:destination="@id/addMealFragment" />
     </fragment>
     <fragment
         android:id="@+id/myRestaurantsFragment"
@@ -52,4 +48,8 @@
             android:id="@+id/action_myRestaurantsFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addMealFragment"
+        android:name="com.example.food2you_restaurantsonly.ui.AddMealFragment"
+        android:label="AddMealFragment" />
 </navigation>

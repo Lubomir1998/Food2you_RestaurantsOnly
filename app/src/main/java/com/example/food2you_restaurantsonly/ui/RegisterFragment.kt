@@ -8,18 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.food2you_restaurantsonly.R
-import com.example.food2you_restaurantsonly.databinding.LoginFragmentBinding
 import com.example.food2you_restaurantsonly.databinding.RegisterFragmentBinding
 import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
+import com.example.food2you_restaurantsonly.other.Constants
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
-import com.example.food2you_restaurantsonly.other.RegAndLoginUtility
-import com.example.food2you_restaurantsonly.other.RegAndLoginUtility.authenticateApi
-import com.example.food2you_restaurantsonly.other.RegAndLoginUtility.isLoggedIn
+import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
+import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
 import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.viewmodels.AuthViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -33,10 +31,10 @@ class RegisterFragment: Fragment(R.layout.register_fragment) {
     private val model: AuthViewModel by viewModels()
 
     @Inject
-    lateinit var basicAuthInterceptor: BasicAuthInterceptor
+    lateinit var sharedPrefs: SharedPreferences
 
     @Inject
-    lateinit var sharedPrefs: SharedPreferences
+    lateinit var basicAuthInterceptor: BasicAuthInterceptor
 
     private var currentEmail: String? = null
     private var currentPassword: String? = null
@@ -55,7 +53,8 @@ class RegisterFragment: Fragment(R.layout.register_fragment) {
 
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        if(isLoggedIn(sharedPrefs, currentEmail ?: "", currentPassword ?: "")) {
+        if(isLoggedIn()) {
+            authenticateApi(currentEmail ?: "", currentPassword ?: "")
             redirectLogin()
         }
 
@@ -93,7 +92,7 @@ class RegisterFragment: Fragment(R.layout.register_fragment) {
                             .putString(KEY_PASSWORD, currentPassword)
                             .apply()
 
-                        authenticateApi(currentEmail ?: "", currentPassword ?: "", basicAuthInterceptor)
+                        authenticateApi(currentEmail ?: "", currentPassword ?: "")
 
                         redirectLogin()
                     }
@@ -111,6 +110,18 @@ class RegisterFragment: Fragment(R.layout.register_fragment) {
         })
     }
 
+
+    private fun isLoggedIn(): Boolean {
+        currentEmail = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
+        currentPassword = sharedPrefs.getString(KEY_PASSWORD, NO_PASSWORD) ?: NO_PASSWORD
+
+        return currentEmail != NO_EMAIL && currentPassword != NO_PASSWORD
+    }
+
+    private fun authenticateApi(email: String, password: String) {
+        basicAuthInterceptor.email = email
+        basicAuthInterceptor.password = password
+    }
 
     private fun redirectLogin() {
         val navOptions = NavOptions.Builder()
