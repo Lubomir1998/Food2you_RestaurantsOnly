@@ -32,6 +32,10 @@
         <action
             android:id="@+id/action_addRestaurantFragment_to_addMealFragment"
             app:destination="@id/addMealFragment" />
+        <argument
+            android:name="resId"
+            app:argType="string"
+            android:defaultValue="no_id" />
     </fragment>
     <fragment
         android:id="@+id/myRestaurantsFragment"
@@ -51,5 +55,9 @@
     <fragment
         android:id="@+id/addMealFragment"
         android:name="com.example.food2you_restaurantsonly.ui.AddMealFragment"
-        android:label="AddMealFragment" />
+        android:label="AddMealFragment" >
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -3,28 +3,36 @@ package com.example.food2you_restaurantsonly.ui
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.food2you_restaurantsonly.R
-import com.example.food2you_restaurantsonly.databinding.AddRestaurantFragmentBinding
-import com.example.food2you_restaurantsonly.databinding.LoginFragmentBinding
+import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import com.example.food2you_restaurantsonly.databinding.MyRestaurantsFragmentBinding
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
 import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
+import com.example.food2you_restaurantsonly.other.Status
+import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+private const val TAG = "MyRestaurantsFragment"
 @AndroidEntryPoint
 class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
     private lateinit var binding: MyRestaurantsFragmentBinding
+    private val model: AddRestaurantViewModel by viewModels()
 
     @Inject
     lateinit var sharedPrefs: SharedPreferences
+
+
+    private var currentRestaurant: Restaurant? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,8 +49,16 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
+
+        model.getRestaurantByOwner(sharedPrefs.getString(KEY_EMAIL, "") ?: "")
+        Log.d(TAG, "***********onViewCreated: ${sharedPrefs.getString(KEY_EMAIL, "") ?: ""}")
+        subscribeToObservers()
+
+
         binding.addRestaurantImg.setOnClickListener {
-            findNavController().navigate(R.id.action_myRestaurantsFragment_to_addRestaurantFragment)
+            val action = MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToAddRestaurantFragment(currentRestaurant?.id ?: "")
+            Log.d(TAG, "********clicked: ${currentRestaurant?.id}")
+            findNavController().navigate(action)
         }
 
     }
@@ -50,7 +66,27 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
 
 
+    private fun subscribeToObservers() {
+        model.restaurant.observe(viewLifecycleOwner, {
+            it?.getContentIfNotHandled()?.let { result ->
 
+                when(result.status) {
+                    Status.SUCCESS -> {
+                        val restaurant = result.data!!
+                        currentRestaurant = restaurant
+                        Log.d(TAG, "********success: ${currentRestaurant?.owner}")
+                    }
+                    Status.ERROR -> {
+                        Log.d(TAG, "********subscribeToObservers: error")
+
+                    } Status.LOADING -> {
+
+                }
+                }
+
+            }
+        })
+    }
 
     private fun logOut() {
         sharedPrefs.edit()

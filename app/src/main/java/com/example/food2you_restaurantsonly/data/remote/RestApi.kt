@@ -8,6 +8,7 @@ import com.example.food2you_restaurantsonly.data.remote.responses.SimpleResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface RestApi {
@@ -26,5 +27,8 @@ interface RestApi {
 
     @POST("/deleteRestaurant")
     suspend fun deleteRestaurant(@Body deleteRestaurantRequest: DeleteRestaurantRequest): Response<ResponseBody>
+
+    @GET("/getFoodResOnly")
+    suspend fun getFood(): Response<List<Food>>
 
 }

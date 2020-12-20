@@ -12,6 +12,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.food2you_restaurantsonly.R
 import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.databinding.AddFoodFragmentBinding
@@ -30,6 +31,8 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
     private lateinit var binding: AddFoodFragmentBinding
     private val model: AddRestaurantViewModel by viewModels()
 
+    private val args: AddMealFragmentArgs by navArgs()
+
     @Inject
     lateinit var sharedPrefs: SharedPreferences
 
@@ -44,6 +47,13 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        if(args.id.isNotEmpty()) {
+            model.getFoodById(args.id)
+            // subscribe to observers
+        }
+
 
         binding.saveFoodImg.visibility = if(areFieldsFilledOut()) {
             View.VISIBLE
@@ -146,7 +156,8 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
             if(checkForInternetConnection(requireContext())) {
                 if (owner != NO_EMAIL) {
                     model.saveFood(food)
-                    Snackbar.make(requireView(), "Saved", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(requireView(), "Meal Saved", Snackbar.LENGTH_LONG).show()
+                    clearTextFields()
                 } else {
                     Snackbar.make(requireView(), "An unknown error occurred", Snackbar.LENGTH_LONG)
                         .show()
@@ -171,6 +182,14 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
                 && binding.foodWeightEt.text.toString().isNotEmpty()
                 && binding.foodPriceEt.text.toString().isNotEmpty()
                 && binding.urlEt.text.toString().isNotEmpty()
+    }
+
+    private fun clearTextFields() {
+        binding.foodNameEt.text?.clear()
+        binding.foodTypeEt.text?.clear()
+        binding.foodWeightEt.text?.clear()
+        binding.foodPriceEt.text?.clear()
+        binding.urlEt.text?.clear()
     }
 
 }
