@@ -6,12 +6,14 @@ import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.data.remote.RestApi
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import com.example.food2you_restaurantsonly.data.remote.requests.AccountRequest
+import com.example.food2you_restaurantsonly.data.remote.requests.DeleteFoodRequest
 import com.example.food2you_restaurantsonly.other.Resource
 import com.example.food2you_restaurantsonly.other.checkForInternetConnection
 import com.example.food2you_restaurantsonly.other.networkBoundResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 import javax.inject.Inject
 
 class Repository
@@ -77,16 +79,43 @@ class Repository
 
     }
 
+    suspend fun deleteFoodById(foodId: String) {
+        val response = try {
+            api.deleteFood(DeleteFoodRequest(foodId))
+        } catch (e: Exception) {
+            null
+        }
+
+        if(response != null) {
+            dao.deleteFood(foodId)
+        }
+
+    }
+
+    private var currentResponse: Response<List<Food>>? = null
+
+    private suspend fun sync() {
+        currentResponse = api.getFood()
+
+        currentResponse?.body()?.let { meals ->
+            dao.deleteAllFood()
+            meals.forEach { addFood(it) }
+        }
+    }
+
     fun getAllFood(): Flow<Resource<List<Food>>> {
         return networkBoundResource(
             query = {
                 dao.getAllFood()
             },
             fetch = {
-
+                sync()
+                currentResponse
             },
-            savedFetchResult = {
-
+            savedFetchResult = { response ->
+                response?.body()?.let { meals ->
+                    meals.forEach { addFood(it) }
+                }
             },
             shouldFetch = {
                 checkForInternetConnection(context)

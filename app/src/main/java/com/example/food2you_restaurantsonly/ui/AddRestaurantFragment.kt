@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.food2you_restaurantsonly.FoodAdapter
 import com.example.food2you_restaurantsonly.R
+import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import com.example.food2you_restaurantsonly.databinding.AddRestaurantFragmentBinding
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
@@ -29,13 +32,12 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
 
     private lateinit var binding: AddRestaurantFragmentBinding
     private val model: AddRestaurantViewModel by viewModels()
-
     private val args: AddRestaurantFragmentArgs by navArgs()
-
     @Inject
     lateinit var sharedPrefs: SharedPreferences
-
     private var currentRestaurant: Restaurant? = null
+    private lateinit var foodAdapter: FoodAdapter
+    private lateinit var listener: FoodAdapter.OnFoodClickListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +56,27 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
             model.getRestaurantById(args.resId)
             subscribeToObservers()
         }
+
+        listener = object : FoodAdapter.OnFoodClickListener {
+            override fun onFoodClicked(food: Food) {
+                val action = AddRestaurantFragmentDirections.actionAddRestaurantFragmentToAddMealFragment(food.id)
+                findNavController().navigate(action)
+            }
+
+            override fun deleteFood(food: Food) {
+                model.deleteFood(food.id)
+                Snackbar.make(requireView(), "Deleted", Snackbar.LENGTH_LONG)
+                    .setAction("Undo") {
+                        model.saveFood(food)
+                    }
+                    .show()
+            }
+        }
+
+        foodAdapter = FoodAdapter(listOf(), requireContext(), listener)
+
+        setUpRecyclerView()
+        allFoodObserver()
 
 
         binding.addBtn.setOnClickListener {
@@ -96,6 +119,48 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
 
 
 
+    private fun displayData(list: List<Food>) {
+        foodAdapter.foodList = list
+        foodAdapter.notifyDataSetChanged()
+    }
+
+    private fun setUpRecyclerView() {
+        binding.recyclerView.apply {
+            adapter = foodAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
+        }
+    }
+
+    private fun allFoodObserver() {
+        model.allFood.observe(viewLifecycleOwner, {
+            it?.let { event ->
+                val result = event.peekContent()
+
+                when (result.status) {
+                    Status.SUCCESS -> {
+                        displayData(result.data!!)
+                        Log.d(TAG, "%********allFoodObserver: ${result.data.size}")
+                    }
+                    Status.ERROR -> {
+                        event.getContentIfNotHandled()?.let { error ->
+                            error.message?.let { message ->
+                                Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
+                            }
+                        }
+                        result.data?.let { notes ->
+                            displayData(notes)
+                        }
+                    }
+                    Status.LOADING -> {
+                        result.data?.let { notes ->
+                            displayData(notes)
+                        }
+                    }
+                }
+            }
+        })
+    }
 
     private fun subscribeToObservers() {
         model.restaurant.observe(viewLifecycleOwner, {

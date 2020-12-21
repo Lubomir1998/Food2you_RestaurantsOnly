@@ -18,6 +18,7 @@ import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.databinding.AddFoodFragmentBinding
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
+import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.other.checkForInternetConnection
 import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +37,8 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
     @Inject
     lateinit var sharedPrefs: SharedPreferences
 
+    private var currentMeal: Food? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,7 +54,7 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
 
         if(args.id.isNotEmpty()) {
             model.getFoodById(args.id)
-            // subscribe to observers
+            subscribeToObservers()
         }
 
 
@@ -147,7 +150,7 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
             val weight = binding.foodWeightEt.text.toString().toInt()
             val price = binding.foodPriceEt.text.toString().toFloat()
             val imgUrl = binding.urlEt.text.toString()
-            val id = UUID.randomUUID().toString()
+            val id = currentMeal?.id ?: UUID.randomUUID().toString()
 
             val owner = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
 
@@ -174,6 +177,33 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
 
 
 
+    private fun subscribeToObservers() {
+        model.food.observe(viewLifecycleOwner, {
+            it?.getContentIfNotHandled()?.let { result ->
+                when(result.status) {
+                    Status.SUCCESS -> {
+                        val food = result.data!!
+
+                        currentMeal = food
+
+                        binding.foodNameEt.setText(currentMeal!!.name)
+                        binding.foodTypeEt.setText(currentMeal!!.type)
+                        binding.urlEt.setText(currentMeal!!.imgUrl)
+                        binding.foodWeightEt.setText(currentMeal!!.weight.toString())
+                        binding.foodPriceEt.setText(currentMeal!!.price.toString())
+
+                    }
+                    Status.ERROR -> {
+
+                    }
+                    Status.LOADING -> {
+
+                    }
+                }
+
+            }
+        })
+    }
 
 
     private fun areFieldsFilledOut(): Boolean {

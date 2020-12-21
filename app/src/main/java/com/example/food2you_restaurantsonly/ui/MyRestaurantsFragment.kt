@@ -18,7 +18,9 @@ import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
 import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import java.security.acl.NotOwnerException
 import javax.inject.Inject
 
 private const val TAG = "MyRestaurantsFragment"
@@ -49,10 +51,12 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
-
-        model.getRestaurantByOwner(sharedPrefs.getString(KEY_EMAIL, "") ?: "")
-        Log.d(TAG, "***********onViewCreated: ${sharedPrefs.getString(KEY_EMAIL, "") ?: ""}")
-        subscribeToObservers()
+        if(sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) != NO_EMAIL) {
+            val email = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: ""
+            model.getRestaurantByOwner(sharedPrefs.getString(KEY_EMAIL, "") ?: "")
+            binding.emailTV.text = "Welcome $email"
+            subscribeToObservers()
+        }
 
 
         binding.addRestaurantImg.setOnClickListener {
@@ -74,7 +78,10 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
                     Status.SUCCESS -> {
                         val restaurant = result.data!!
                         currentRestaurant = restaurant
-                        Log.d(TAG, "********success: ${currentRestaurant?.owner}")
+
+                        Picasso.with(requireContext()).load(currentRestaurant!!.imgUrl).into(binding.resImg)
+                        binding.resNameTextView.text = currentRestaurant!!.name
+
                     }
                     Status.ERROR -> {
                         Log.d(TAG, "********subscribeToObservers: error")

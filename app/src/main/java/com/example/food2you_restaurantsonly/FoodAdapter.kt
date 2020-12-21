@@ -1,12 +1,14 @@
 package com.example.food2you_restaurantsonly
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.databinding.FoodItemBinding
+import com.squareup.picasso.Picasso
 
-class FoodAdapter(var foodList: List<Food>): RecyclerView.Adapter<FoodAdapter.MyViewHolder>() {
+class FoodAdapter(var foodList: List<Food>, private val context: Context, private val listener: OnFoodClickListener): RecyclerView.Adapter<FoodAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = FoodItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -18,11 +20,13 @@ class FoodAdapter(var foodList: List<Food>): RecyclerView.Adapter<FoodAdapter.My
 
         holder.typeTextView.text = meal.type
         holder.nameTextView.text = meal.name
-        holder.priceTextView.text = meal.price.toString()
+        holder.priceTextView.text = "${meal.price.toString()} €"
 
+        Picasso.with(context).load(meal.imgUrl).into(holder.imageView)
 
-        // now load image with glide
+        holder.onFoodClickListener(meal, listener)
 
+        holder.deleteFood(meal, listener)
 
     }
 
@@ -34,6 +38,27 @@ class FoodAdapter(var foodList: List<Food>): RecyclerView.Adapter<FoodAdapter.My
         val imageView = itemView.mealImg
         val nameTextView = itemView.nameTextView
         val priceTextView = itemView.priceTextView
+        val deleteImg = itemView.deleteImg
+
+
+        fun onFoodClickListener(food: Food, listener: OnFoodClickListener) {
+            itemView.setOnClickListener {
+                listener.onFoodClicked(food)
+            }
+        }
+
+        fun deleteFood(food: Food, listener: OnFoodClickListener) {
+            deleteImg.setOnClickListener {
+                listener.deleteFood(food)
+            }
+        }
+
+    }
+
+
+    interface OnFoodClickListener {
+        fun onFoodClicked(food: Food)
+        fun deleteFood(food: Food)
     }
 
 }

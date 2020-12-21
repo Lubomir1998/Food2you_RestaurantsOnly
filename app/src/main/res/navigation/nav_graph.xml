@@ -58,6 +58,7 @@
         android:label="AddMealFragment" >
         <argument
             android:name="id"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="no_id" />
     </fragment>
 </navigation>

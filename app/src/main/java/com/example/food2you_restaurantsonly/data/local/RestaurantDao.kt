@@ -16,6 +16,9 @@ interface RestaurantDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRestaurant(restaurant: Restaurant)
 
+    @Query("DELETE FROM food WHERE id = :foodId")
+    suspend fun deleteFood(foodId: String)
+
     @Query("SELECT * FROM food")
     fun getAllFood(): Flow<List<Food>>
 
@@ -27,6 +30,9 @@ interface RestaurantDao {
 
     @Query("SELECT * FROM restaurant WHERE id = :id")
     suspend fun getRestaurantById(id: String): Restaurant?
+
+    @Query("DELETE FROM food")
+    suspend fun deleteAllFood()
 
 
 }
