@@ -64,12 +64,22 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
             }
 
             override fun deleteFood(food: Food) {
-                model.deleteFood(food.id)
-                Snackbar.make(requireView(), "Deleted", Snackbar.LENGTH_LONG)
-                    .setAction("Undo") {
-                        model.saveFood(food)
-                    }
-                    .show()
+                if(checkForInternetConnection(requireContext())){
+                    model.deleteFood(food.id)
+                    Snackbar.make(requireView(), "Deleted", Snackbar.LENGTH_LONG)
+                        .setAction("Undo") {
+                            if(checkForInternetConnection(requireContext())) {
+                                model.saveFood(food)
+                            }
+                            else {
+                                Snackbar.make(requireView(), "Check your internet connection", Snackbar.LENGTH_LONG).show()
+                            }
+                        }
+                        .show()
+                }
+                else {
+                    Snackbar.make(requireView(), "Check your internet connection", Snackbar.LENGTH_LONG).show()
+                }
             }
         }
 
