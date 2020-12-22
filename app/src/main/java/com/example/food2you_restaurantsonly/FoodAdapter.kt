@@ -1,5 +1,6 @@
 package com.example.food2you_restaurantsonly
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -15,12 +16,13 @@ class FoodAdapter(var foodList: List<Food>, private val context: Context, privat
         return MyViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val meal = foodList[position]
 
         holder.typeTextView.text = meal.type
         holder.nameTextView.text = meal.name
-        holder.priceTextView.text = "${meal.price.toString()} €"
+        holder.priceTextView.text = "€${meal.price}"
 
         Picasso.with(context).load(meal.imgUrl).into(holder.imageView)
 

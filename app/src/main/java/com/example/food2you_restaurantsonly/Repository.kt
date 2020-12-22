@@ -96,7 +96,6 @@ class Repository
 
     private suspend fun sync() {
         currentResponse = api.getFood()
-
         currentResponse?.body()?.let { meals ->
             dao.deleteAllFood()
             meals.forEach { addFood(it) }

@@ -106,7 +106,7 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
                 if(checkForInternetConnection(requireContext())) {
                     if(owner != NO_EMAIL) {
                         model.saveRestaurant(restaurant)
-                       // Snackbar.make(requireView(), "Restaurant Saved", Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(requireView(), "Restaurant Saved", Snackbar.LENGTH_LONG).show()
                     }
                     else {
                         Snackbar.make(requireView(), "An unknown error occurred", Snackbar.LENGTH_LONG).show()
