@@ -25,6 +25,14 @@ class AddRestaurantViewModel @ViewModelInject constructor(private val repository
         MutableLiveData(Event(it))
     }
 
+    private val _restaurantOfOwner = _forceUpdate.switchMap {
+        repository.getRestaurant().asLiveData(viewModelScope.coroutineContext)
+    }.switchMap {
+        MutableLiveData(Event(it))
+    }
+
+    val restaurantOfOwner = _restaurantOfOwner
+
     val allFood: LiveData<Event<Resource<List<Food>>>> = _allFood
 
 

@@ -122,7 +122,38 @@ class Repository
         )
     }
 
+    private var currentResponseRestaurants: Response<Restaurant>? = null
+
+    private suspend fun syncCurrentRes() {
+        currentResponseRestaurants = api.getRestaurantOfOwner()
+        currentResponseRestaurants?.body()?.let { restaurant ->
+            dao.deleteRestaurant()
+            addRestaurant(restaurant)
+        }
+    }
+
+    fun getRestaurant(): Flow<Resource<Restaurant>> {
+        return networkBoundResource(
+                query = {
+                    dao.getRestaurantOfOwner()
+                },
+                fetch = {
+                    syncCurrentRes()
+                    currentResponseRestaurants
+                },
+                savedFetchResult = { response ->
+                    response?.body()?.let { restaurant ->
+                        addRestaurant(restaurant)
+                    }
+                },
+                shouldFetch = {
+                    checkForInternetConnection(context)
+                }
+        )
+    }
+
     suspend fun getRestaurantByOwner(owner: String) = dao.getRestaurantByOwner(owner)
+
 
     suspend fun getRestaurantById(id: String) = dao.getRestaurantById(id)
 

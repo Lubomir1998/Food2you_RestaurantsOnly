@@ -146,6 +146,7 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
 
         binding.saveFoodImg.setOnClickListener {
             val mealName = binding.foodNameEt.text.toString()
+            val description = binding.foodDescriptionEt.text.toString()
             val type = binding.foodTypeEt.text.toString()
             val weight = binding.foodWeightEt.text.toString().toInt()
             val price = binding.foodPriceEt.text.toString().toFloat()
@@ -154,7 +155,7 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
 
             val owner = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
 
-            val food = Food(mealName, type, weight, imgUrl, price, owner, id = id)
+            val food = Food(mealName, description, type, weight, imgUrl, price, owner, id = id)
 
             if(checkForInternetConnection(requireContext())) {
                 if (owner != NO_EMAIL) {
@@ -216,6 +217,7 @@ class AddMealFragment: Fragment(R.layout.add_food_fragment) {
 
     private fun clearTextFields() {
         binding.foodNameEt.text?.clear()
+        binding.foodDescriptionEt.text?.clear()
         binding.foodTypeEt.text?.clear()
         binding.foodWeightEt.text?.clear()
         binding.foodPriceEt.text?.clear()

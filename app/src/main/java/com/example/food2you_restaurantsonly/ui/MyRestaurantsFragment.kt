@@ -71,10 +71,12 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
 
     private fun subscribeToObservers() {
-        model.restaurant.observe(viewLifecycleOwner, {
-            it?.getContentIfNotHandled()?.let { result ->
+        model.restaurantOfOwner.observe(viewLifecycleOwner, {
+            it?.let { event ->
 
-                when(result.status) {
+                val result = event.peekContent()
+
+                when (result.status) {
                     Status.SUCCESS -> {
                         val restaurant = result.data!!
                         currentRestaurant = restaurant
@@ -82,13 +84,15 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
                         Picasso.with(requireContext()).load(currentRestaurant!!.imgUrl).into(binding.resImg)
                         binding.resNameTextView.text = currentRestaurant!!.name
 
+                        Log.d(TAG, "********subscribeToObservers: ${currentRestaurant?.name}")
                     }
                     Status.ERROR -> {
                         Log.d(TAG, "********subscribeToObservers: error")
 
-                    } Status.LOADING -> {
+                    }
+                    Status.LOADING -> {
 
-                }
+                    }
                 }
 
             }

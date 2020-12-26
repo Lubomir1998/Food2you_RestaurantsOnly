@@ -35,4 +35,7 @@ interface RestApi {
     @GET("/getFoodResOnly")
     suspend fun getFood(): Response<List<Food>>
 
+    @GET("/getRestaurantOfOwner")
+    suspend fun getRestaurantOfOwner(): Response<Restaurant>
+
 }

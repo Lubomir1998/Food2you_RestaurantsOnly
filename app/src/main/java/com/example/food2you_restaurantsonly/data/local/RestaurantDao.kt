@@ -22,6 +22,9 @@ interface RestaurantDao {
     @Query("SELECT * FROM food")
     fun getAllFood(): Flow<List<Food>>
 
+    @Query("SELECT * FROM restaurant")
+    fun getRestaurantOfOwner(): Flow<Restaurant>
+
     @Query("SELECT * FROM food WHERE id = :id")
     suspend fun getFoodById(id: String): Food?
 
@@ -33,6 +36,9 @@ interface RestaurantDao {
 
     @Query("DELETE FROM food")
     suspend fun deleteAllFood()
+
+    @Query("DELETE FROM restaurant")
+    suspend fun deleteRestaurant()
 
 
 }
