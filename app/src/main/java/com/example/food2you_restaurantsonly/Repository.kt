@@ -102,6 +102,9 @@ class Repository
         }
     }
 
+    suspend fun deleteAllFood() = dao.deleteAllFood()
+    suspend fun deleteAllRestaurant() = dao.deleteRestaurant()
+
     fun getAllFood(): Flow<Resource<List<Food>>> {
         return networkBoundResource(
             query = {

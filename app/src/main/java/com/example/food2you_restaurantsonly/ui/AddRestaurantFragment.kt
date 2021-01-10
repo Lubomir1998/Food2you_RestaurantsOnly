@@ -101,7 +101,12 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
                 val owner = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
                 val id = currentRestaurant?.id ?: UUID.randomUUID().toString()
 
-                val restaurant = Restaurant(name, type, kitchen, deliveryPrice, minutes, minPrice, imgUrl, listOf(), listOf(), owner, id = id)
+
+                val restaurant = if(args.resId.isEmpty()) {
+                    Restaurant(name, type, kitchen, deliveryPrice, minutes, minPrice, imgUrl, listOf(), listOf(), owner, id = id)
+                } else {
+                    Restaurant(name, type, kitchen, deliveryPrice, minutes, minPrice, imgUrl, currentRestaurant?.previews ?: listOf(), currentRestaurant?.users ?: listOf(), owner, id = id)
+                }
 
                 if(checkForInternetConnection(requireContext())) {
                     if(owner != NO_EMAIL) {

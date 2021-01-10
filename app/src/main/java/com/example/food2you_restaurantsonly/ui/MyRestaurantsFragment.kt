@@ -78,16 +78,16 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
                 when (result.status) {
                     Status.SUCCESS -> {
-                        val restaurant = result.data!!
+                        val restaurant = result.data
                         currentRestaurant = restaurant
 
-                        Picasso.with(requireContext()).load(currentRestaurant!!.imgUrl).into(binding.resImg)
-                        binding.resNameTextView.text = currentRestaurant!!.name
+                        Picasso.with(requireContext()).load(currentRestaurant?.imgUrl).into(binding.resImg)
+                        binding.resNameTextView.text = currentRestaurant?.name
 
                         Log.d(TAG, "********subscribeToObservers: ${currentRestaurant?.name}")
                     }
                     Status.ERROR -> {
-                        Log.d(TAG, "********subscribeToObservers: error")
+
 
                     }
                     Status.LOADING -> {
@@ -100,6 +100,10 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
     }
 
     private fun logOut() {
+
+        model.deleteFood()
+        model.deleteRestaurant()
+
         sharedPrefs.edit()
             .putString(KEY_EMAIL, NO_EMAIL)
             .putString(KEY_PASSWORD, NO_PASSWORD)

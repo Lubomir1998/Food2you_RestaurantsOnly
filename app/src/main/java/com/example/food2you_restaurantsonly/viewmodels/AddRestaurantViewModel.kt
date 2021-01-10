@@ -65,6 +65,17 @@ class AddRestaurantViewModel @ViewModelInject constructor(private val repository
 
 
 
+    fun deleteFood() {
+        viewModelScope.launch {
+            repository.deleteAllFood()
+        }
+    }
+
+    fun deleteRestaurant() {
+        viewModelScope.launch {
+            repository.deleteAllRestaurant()
+        }
+    }
 
     fun saveRestaurant(restaurant: Restaurant) = viewModelScope.launch {
         repository.addRestaurant(restaurant)
