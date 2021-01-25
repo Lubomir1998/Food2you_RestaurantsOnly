@@ -65,6 +65,10 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
             findNavController().navigate(action)
         }
 
+        binding.resImg.setOnClickListener {
+            findNavController().navigate(R.id.action_myRestaurantsFragment_to_orderFragment)
+        }
+
     }
 
 

@@ -1,15 +1,21 @@
 package com.example.food2you_restaurantsonly
 
 import android.app.Application
+import android.util.Log
 import com.example.food2you_restaurantsonly.data.local.RestaurantDao
 import com.example.food2you_restaurantsonly.data.local.entities.Food
+import com.example.food2you_restaurantsonly.data.local.entities.Order
 import com.example.food2you_restaurantsonly.data.remote.RestApi
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
+import com.example.food2you_restaurantsonly.data.remote.FirebaseApi
+import com.example.food2you_restaurantsonly.data.remote.PushNotification
 import com.example.food2you_restaurantsonly.data.remote.requests.AccountRequest
 import com.example.food2you_restaurantsonly.data.remote.requests.DeleteFoodRequest
+import com.example.food2you_restaurantsonly.data.remote.requests.UpdateOrderStatusRequest
 import com.example.food2you_restaurantsonly.other.Resource
 import com.example.food2you_restaurantsonly.other.checkForInternetConnection
 import com.example.food2you_restaurantsonly.other.networkBoundResource
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -20,7 +26,8 @@ class Repository
 @Inject constructor(
     private val api: RestApi,
     private val dao: RestaurantDao,
-    private val context: Application
+    private val context: Application,
+    private val firebaseApi: FirebaseApi
 ) {
 
     suspend fun register(email: String, password: String) = withContext(Dispatchers.IO) {
@@ -161,6 +168,75 @@ class Repository
     suspend fun getRestaurantById(id: String) = dao.getRestaurantById(id)
 
     suspend fun getFoodById(id: String) = dao.getFoodById(id)
+
+    suspend fun getOrderById(id: String) = dao.getOrderById(id)
+
+    private var currentOrderResponse: Response<List<Order>>? = null
+
+    private suspend fun syncOrders() {
+        currentOrderResponse = api.getAllOrders()
+        currentOrderResponse?.body()?.let { orders ->
+            dao.deleteAllOrders()
+            for(order in orders) {
+                dao.insertOrder(order)
+            }
+        }
+    }
+
+    fun getOrders(): Flow<Resource<List<Order>>> {
+        return networkBoundResource(
+            query = {
+                dao.getAllOrders()
+            },
+            fetch = {
+                syncOrders()
+                currentOrderResponse
+            },
+            savedFetchResult = { response ->
+                response?.body()?.let { orders ->
+                    orders.forEach { dao.insertOrder(it) }
+
+                }
+            },
+            shouldFetch = {
+                checkForInternetConnection(context)
+            }
+        )
+    }
+
+    suspend fun updateOrderStatus(id: String, status: String) = withContext(Dispatchers.IO) {
+
+        val response = api.updateOrderStatus(UpdateOrderStatusRequest(id, status))
+
+        try {
+            if(response.isSuccessful && response.body()!!.isSuccessful) {
+                Resource.success(response.body()?.message)
+            }
+            else {
+                Resource.error( response.body()?.message ?: response.message(), null)
+            }
+        }
+        catch (e: Exception) {
+            Resource.error( "Couldn't connect to servers. Check your internet connection", null)
+        }
+
+
+    }
+
+    // Firebase
+    suspend fun sendPushNotification(pushNotification: PushNotification) {
+        try {
+            firebaseApi.postNotification(pushNotification)
+//            if(response.isSuccessful) {
+//                Log.d("TAG", "###### if ${Gson().toJson(response)} ")
+//            }
+//            else {
+//                Log.d("TAG", "####### else ${response.errorBody()?.toString()} ")
+//            }
+        } catch (e: Exception) {
+            Log.d("TAG", "####### catch ${e.message.toString()} ")
+        }
+    }
 
 
 }

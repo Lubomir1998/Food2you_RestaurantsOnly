@@ -1,10 +1,12 @@
 package com.example.food2you_restaurantsonly.data.remote
 
 import com.example.food2you_restaurantsonly.data.local.entities.Food
+import com.example.food2you_restaurantsonly.data.local.entities.Order
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import com.example.food2you_restaurantsonly.data.remote.requests.AccountRequest
 import com.example.food2you_restaurantsonly.data.remote.requests.DeleteFoodRequest
 import com.example.food2you_restaurantsonly.data.remote.requests.DeleteRestaurantRequest
+import com.example.food2you_restaurantsonly.data.remote.requests.UpdateOrderStatusRequest
 import com.example.food2you_restaurantsonly.data.remote.responses.SimpleResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -37,5 +39,11 @@ interface RestApi {
 
     @GET("/getRestaurantOfOwner")
     suspend fun getRestaurantOfOwner(): Response<Restaurant>
+
+    @GET("/allOrders")
+    suspend fun getAllOrders(): Response<List<Order>>
+
+    @POST("/updateOrderStatus")
+    suspend fun updateOrderStatus(@Body request: UpdateOrderStatusRequest): Response<SimpleResponse>
 
 }

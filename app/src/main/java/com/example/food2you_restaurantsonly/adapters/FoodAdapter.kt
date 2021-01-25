@@ -1,4 +1,4 @@
-package com.example.food2you_restaurantsonly
+package com.example.food2you_restaurantsonly.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -1,7 +1,9 @@
 package com.example.food2you_restaurantsonly.data.local
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.food2you_restaurantsonly.data.local.entities.Food
+import com.example.food2you_restaurantsonly.data.local.entities.Order
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
@@ -15,6 +17,9 @@ interface RestaurantDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRestaurant(restaurant: Restaurant)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrder(order: Order)
 
     @Query("DELETE FROM food WHERE id = :foodId")
     suspend fun deleteFood(foodId: String)
@@ -39,6 +44,15 @@ interface RestaurantDao {
 
     @Query("DELETE FROM restaurant")
     suspend fun deleteRestaurant()
+
+    @Query("SELECT * FROM `order`")
+    fun getAllOrders(): Flow<List<Order>>
+
+    @Query("DELETE FROM `order`")
+    suspend fun deleteAllOrders()
+
+    @Query("SELECT * FROM `order` WHERE id = :id")
+    suspend fun getOrderById(id: String): Order?
 
 
 }

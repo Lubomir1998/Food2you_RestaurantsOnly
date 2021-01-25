@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.food2you_restaurantsonly.FoodAdapter
+import com.example.food2you_restaurantsonly.adapters.FoodAdapter
 import com.example.food2you_restaurantsonly.R
 import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant

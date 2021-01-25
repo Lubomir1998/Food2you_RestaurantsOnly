@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.food2you_restaurantsonly.data.local.DbHelper
+import com.example.food2you_restaurantsonly.data.remote.FirebaseApi
 import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
 import com.example.food2you_restaurantsonly.data.remote.RestApi
 import com.example.food2you_restaurantsonly.other.Constants.ENCRYPTED_SHARED_PREFS_NAME
@@ -61,6 +62,15 @@ object AppModule {
             .create(RestApi::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideFirebaseApi(): FirebaseApi{
+        return Retrofit.Builder()
+            .baseUrl("https://fcm.googleapis.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(FirebaseApi::class.java)
+    }
 
     @Singleton
     @Provides
