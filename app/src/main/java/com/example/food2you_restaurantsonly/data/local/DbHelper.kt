@@ -7,7 +7,7 @@ import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.data.local.entities.Order
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 
-@Database(entities = [Restaurant::class, Food::class, Order::class], version = 3)
+@Database(entities = [Restaurant::class, Food::class, Order::class], version = 5)
 @TypeConverters(Converters::class)
 abstract class DbHelper: RoomDatabase() {
 

@@ -9,6 +9,7 @@ data class Order(
     var restaurant: String = "",
     var address: String = "",
     var recipient: String = "",
+    var email: String = "",
     var phoneNumber: Long = 0L,
     var food: List<FoodItem> = listOf(),
     var price: Float = 0f,

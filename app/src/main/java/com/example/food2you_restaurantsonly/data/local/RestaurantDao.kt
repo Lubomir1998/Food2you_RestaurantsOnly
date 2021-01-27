@@ -45,7 +45,7 @@ interface RestaurantDao {
     @Query("DELETE FROM restaurant")
     suspend fun deleteRestaurant()
 
-    @Query("SELECT * FROM `order`")
+    @Query("SELECT * FROM `order` WHERE status = 'Waiting'")
     fun getAllOrders(): Flow<List<Order>>
 
     @Query("DELETE FROM `order`")

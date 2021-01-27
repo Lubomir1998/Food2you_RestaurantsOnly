@@ -39,10 +39,12 @@ class OrderAdapter(private val listener: OnOrderClickListener): RecyclerView.Ada
             phoneNumberTv.text = order.phoneNumber.toString()
 
             val foods = order.food
+            var text = ""
             for(food in foods) {
-                foodTv.text =
-                    if (food == foods[0]) "${food.quantity} ${food.name}" else ", ${food.quantity} ${food.name}"
+                text += if (food == foods[0]) "${food.quantity} ${food.name}" else ", ${food.quantity} ${food.name}"
             }
+
+            foodTv.text = text
 
             val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             val dateString = dateFormat.format(order.timestamp)
@@ -56,8 +58,6 @@ class OrderAdapter(private val listener: OnOrderClickListener): RecyclerView.Ada
     }
 
     override fun getItemCount(): Int = differ.currentList.size
-
-    // "${if(item == list[0]) "${item.quantity} ${item.name}" else ", ${item.quantity} ${item.name}"}"
 
 
     class MyViewHolder(itemView: OrderItemBinding): RecyclerView.ViewHolder(itemView.root) {
