@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
+    <action
+        android:id="@+id/action_launch_waiting_orders_fragment"
+        app:destination="@+id/orderFragment"
+        app:launchSingleTop="true"
+        />
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.food2you_restaurantsonly.ui.LoginFragment"
@@ -71,6 +77,10 @@
         <action
             android:id="@+id/action_orderFragment_to_switchOrderStatusFragment"
             app:destination="@id/switchOrderStatusFragment" />
+        <argument
+            android:name="restaurantName"
+            app:argType="string"
+            android:defaultValue=""/>
     </fragment>
     <fragment
         android:id="@+id/switchOrderStatusFragment"
@@ -78,6 +88,10 @@
         android:label="SwitchOrderStatusFragment" >
         <argument
             android:name="orderId"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument
+            android:name="restaurantName"
             app:argType="string"
             android:defaultValue=""/>
     </fragment>

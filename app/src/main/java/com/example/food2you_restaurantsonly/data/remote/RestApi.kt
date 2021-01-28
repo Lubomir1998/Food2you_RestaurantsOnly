@@ -13,6 +13,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface RestApi {
 
@@ -45,5 +46,11 @@ interface RestApi {
 
     @POST("/updateOrderStatus")
     suspend fun updateOrderStatus(@Body request: UpdateOrderStatusRequest): Response<SimpleResponse>
+
+    @POST("/registerOwnerToken/{owner}")
+    suspend fun registerOwnerToken(@Body userToken: UserToken, @Path("owner") ownerEmail: String): Response<SimpleResponse>
+
+    @POST("/changeRestaurantToken/{owner}")
+    suspend fun changeRestaurantToken(@Body userToken: UserToken, @Path("owner") ownerEmail: String): Response<SimpleResponse>
 
 }

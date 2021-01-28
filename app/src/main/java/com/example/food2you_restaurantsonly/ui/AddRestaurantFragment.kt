@@ -17,6 +17,8 @@ import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import com.example.food2you_restaurantsonly.databinding.AddRestaurantFragmentBinding
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
+import com.example.food2you_restaurantsonly.other.Constants.KEY_NAME
+import com.example.food2you_restaurantsonly.other.Constants.KEY_TOKEN
 import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.other.checkForInternetConnection
@@ -101,16 +103,19 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
                 val owner = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
                 val id = currentRestaurant?.id ?: UUID.randomUUID().toString()
 
+                val token = sharedPrefs.getString(KEY_TOKEN, "") ?: ""
+
 
                 val restaurant = if(args.resId.isEmpty()) {
-                    Restaurant(name, type, kitchen, deliveryPrice, minutes, minPrice, imgUrl, listOf(), listOf(), owner, id = id)
+                    Restaurant(name, type, kitchen, deliveryPrice, minutes, minPrice, imgUrl, listOf(), listOf(), token, owner, id = id)
                 } else {
-                    Restaurant(name, type, kitchen, deliveryPrice, minutes, minPrice, imgUrl, currentRestaurant?.previews ?: listOf(), currentRestaurant?.users ?: listOf(), owner, id = id)
+                    Restaurant(name, type, kitchen, deliveryPrice, minutes, minPrice, imgUrl, currentRestaurant?.previews ?: listOf(), currentRestaurant?.users ?: listOf(), token, owner, id = id)
                 }
 
                 if(checkForInternetConnection(requireContext())) {
                     if(owner != NO_EMAIL) {
                         model.saveRestaurant(restaurant)
+                        sharedPrefs.edit().putString(KEY_NAME, restaurant.name).apply()
                         Snackbar.make(requireView(), "Restaurant Saved", Snackbar.LENGTH_LONG).show()
                     }
                     else {

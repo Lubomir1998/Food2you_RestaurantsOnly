@@ -10,9 +10,15 @@ object Constants {
     const val NO_EMAIL = "no_email"
     const val NO_PASSWORD = "no_password"
 
+    const val KEY_NAME = "KEY_NAME"
+
     const val KEY_TOKEN = "KEY_TOKEN"
+
+    const val NOTIFICATION_TAP = "NOTIFICATION_TAP"
 
     const val SERVER_KEY = BuildConfig.SERVER_KEY
     const val CONTENT_TYPE = "application/json"
+
+    const val CHANNEL_ID = "CHANNEL_ID"
 
 }

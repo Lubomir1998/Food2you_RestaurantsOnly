@@ -56,12 +56,13 @@ class SwitchOrderStatusFragment: Fragment(R.layout.switch_order_status_fragment)
 
 
     private fun sendPushNotificationToUser() {
-        viewModel.sendPushNotification(PushNotification(
-            NotificationData(
-            "On the way", "Your order is on the way"
-            ),
-            currentOrder!!.recipient)
-        )
+        val title = if(navArgs.restaurantName.isNotEmpty()) {
+            navArgs.restaurantName
+        }
+        else {
+            "On the way!"
+        }
+        viewModel.sendPushNotification(PushNotification(NotificationData(title, "Your order from ${navArgs.restaurantName} is on the way!"), currentOrder!!.recipient))
     }
 
 

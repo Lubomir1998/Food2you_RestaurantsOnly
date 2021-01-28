@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.food2you_restaurantsonly.Repository
+import com.example.food2you_restaurantsonly.data.remote.UserToken
 import com.example.food2you_restaurantsonly.other.Resource
 import kotlinx.coroutines.launch
 
@@ -63,6 +64,14 @@ class AuthViewModel @ViewModelInject constructor(private val repository: Reposit
         viewModelScope.launch {
             val result = repository.login(email, password)
             _loginStatus.postValue(result)
+        }
+    }
+
+
+    fun registerOwnerToken(userToken: UserToken, email: String, isLogging: Boolean = true) = viewModelScope.launch {
+        repository.registerOwnerToken(userToken, email)
+        if(isLogging) {
+            repository.changeRestaurantToken(userToken, email)
         }
     }
 

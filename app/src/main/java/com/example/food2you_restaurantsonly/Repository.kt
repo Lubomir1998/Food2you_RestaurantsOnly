@@ -1,7 +1,6 @@
 package com.example.food2you_restaurantsonly
 
 import android.app.Application
-import android.util.Log
 import com.example.food2you_restaurantsonly.data.local.RestaurantDao
 import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.data.local.entities.Order
@@ -9,13 +8,13 @@ import com.example.food2you_restaurantsonly.data.remote.RestApi
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import com.example.food2you_restaurantsonly.data.remote.FirebaseApi
 import com.example.food2you_restaurantsonly.data.remote.PushNotification
+import com.example.food2you_restaurantsonly.data.remote.UserToken
 import com.example.food2you_restaurantsonly.data.remote.requests.AccountRequest
 import com.example.food2you_restaurantsonly.data.remote.requests.DeleteFoodRequest
 import com.example.food2you_restaurantsonly.data.remote.requests.UpdateOrderStatusRequest
 import com.example.food2you_restaurantsonly.other.Resource
 import com.example.food2you_restaurantsonly.other.checkForInternetConnection
 import com.example.food2you_restaurantsonly.other.networkBoundResource
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -227,16 +226,12 @@ class Repository
     suspend fun sendPushNotification(pushNotification: PushNotification) {
         try {
             firebaseApi.postNotification(pushNotification)
-//            if(response.isSuccessful) {
-//                Log.d("TAG", "###### if ${Gson().toJson(response)} ")
-//            }
-//            else {
-//                Log.d("TAG", "####### else ${response.errorBody()?.toString()} ")
-//            }
-        } catch (e: Exception) {
-            Log.d("TAG", "####### catch ${e.message.toString()} ")
-        }
+        } catch (e: Exception) { }
     }
+
+    suspend fun registerOwnerToken(userToken: UserToken, email: String) = api.registerOwnerToken(userToken, email)
+
+    suspend fun changeRestaurantToken(userToken: UserToken, email: String) = api.changeRestaurantToken(userToken, email)
 
 
 }

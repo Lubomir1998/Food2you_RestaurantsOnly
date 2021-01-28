@@ -13,6 +13,7 @@ import com.example.food2you_restaurantsonly.R
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
 import com.example.food2you_restaurantsonly.databinding.MyRestaurantsFragmentBinding
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
+import com.example.food2you_restaurantsonly.other.Constants.KEY_NAME
 import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
 import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
@@ -23,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.security.acl.NotOwnerException
 import javax.inject.Inject
 
-private const val TAG = "MyRestaurantsFragment"
 @AndroidEntryPoint
 class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
@@ -61,12 +61,12 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
         binding.addRestaurantImg.setOnClickListener {
             val action = MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToAddRestaurantFragment(currentRestaurant?.id ?: "")
-            Log.d(TAG, "********clicked: ${currentRestaurant?.id}")
             findNavController().navigate(action)
         }
 
         binding.resImg.setOnClickListener {
-            findNavController().navigate(R.id.action_myRestaurantsFragment_to_orderFragment)
+            val action = MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToOrderFragment(currentRestaurant?.name ?: "")
+            findNavController().navigate(action)
         }
 
     }
@@ -88,7 +88,6 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
                         Picasso.with(requireContext()).load(currentRestaurant?.imgUrl).into(binding.resImg)
                         binding.resNameTextView.text = currentRestaurant?.name
 
-                        Log.d(TAG, "********subscribeToObservers: ${currentRestaurant?.name}")
                     }
                     Status.ERROR -> {
 
@@ -111,6 +110,7 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
         sharedPrefs.edit()
             .putString(KEY_EMAIL, NO_EMAIL)
             .putString(KEY_PASSWORD, NO_PASSWORD)
+            .putString(KEY_NAME, "")
             .apply()
 
         val navOptions = NavOptions.Builder()

@@ -15,6 +15,7 @@ data class Restaurant(
     val imgUrl: String,
     val previews: List<String>,
     val users: List<String>,
+    val token: String,
     val owner: String,
     @PrimaryKey(autoGenerate = false)
     val id: String = UUID.randomUUID().toString()

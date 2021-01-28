@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.food2you_restaurantsonly.R
+import com.example.food2you_restaurantsonly.data.remote.UserToken
 import com.example.food2you_restaurantsonly.databinding.RegisterFragmentBinding
 import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
 import com.example.food2you_restaurantsonly.other.Constants
@@ -22,6 +23,9 @@ import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.viewmodels.AuthViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -93,6 +97,15 @@ class RegisterFragment: Fragment(R.layout.register_fragment) {
                             .apply()
 
                         authenticateApi(currentEmail ?: "", currentPassword ?: "")
+
+                        currentEmail?.let {
+                            val token = sharedPrefs.getString(Constants.KEY_TOKEN, "") ?: ""
+                            if (token.isNotEmpty()) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    model.registerOwnerToken(UserToken(token), it, false)
+                                }
+                            }
+                        }
 
                         redirectLogin()
                     }

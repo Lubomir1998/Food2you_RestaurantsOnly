@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.food2you_restaurantsonly.R
 import com.example.food2you_restaurantsonly.adapters.OrderAdapter
@@ -23,6 +24,7 @@ class OrderFragment: Fragment(R.layout.orders_fragment) {
     private lateinit var binding: OrdersFragmentBinding
     private lateinit var orderAdapter: OrderAdapter
     private lateinit var listener: OrderAdapter.OnOrderClickListener
+    private val args: OrderFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +40,7 @@ class OrderFragment: Fragment(R.layout.orders_fragment) {
 
         listener = object : OrderAdapter.OnOrderClickListener {
             override fun onOrderClicked(order: Order) {
-                val action = OrderFragmentDirections.actionOrderFragmentToSwitchOrderStatusFragment(order.id)
+                val action = OrderFragmentDirections.actionOrderFragmentToSwitchOrderStatusFragment(order.id, args.restaurantName)
                 findNavController().navigate(action)
             }
         }
