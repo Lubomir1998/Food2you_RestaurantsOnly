@@ -10,11 +10,15 @@ import com.example.food2you_restaurantsonly.R
 import com.example.food2you_restaurantsonly.Repository
 import com.example.food2you_restaurantsonly.data.remote.PushNotification
 import com.example.food2you_restaurantsonly.data.remote.UserToken
+import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
 import com.example.food2you_restaurantsonly.other.Constants
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.KEY_NAME
+import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
 import com.example.food2you_restaurantsonly.other.Constants.KEY_TOKEN
 import com.example.food2you_restaurantsonly.other.Constants.NOTIFICATION_TAP
+import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
+import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
 import com.google.firebase.iid.FirebaseInstanceId
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var sharedPrefs: SharedPreferences
     @Inject lateinit var repository: Repository
+    @Inject lateinit var basicAuthInterceptor: BasicAuthInterceptor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +80,14 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun navigateWhenNotificationIsTapped() {
+        val email = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
+        val password = sharedPrefs.getString(KEY_PASSWORD, NO_PASSWORD) ?: NO_PASSWORD
+
+        if(email != NO_EMAIL && password != NO_PASSWORD) {
+            basicAuthInterceptor.email = email
+            basicAuthInterceptor.password = password
+        }
+
         val action = NavGraphDirections.actionLaunchWaitingOrdersFragment(sharedPrefs.getString(KEY_NAME, "") ?: "")
         Navigation.findNavController(this, R.id.navHostFragment).navigate(action)
     }
