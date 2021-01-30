@@ -96,8 +96,10 @@ class MainActivity : AppCompatActivity() {
 
             if(email.isNotEmpty()) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    repository.registerOwnerToken(userToken, email)
-                    repository.changeRestaurantToken(userToken, email)
+                    try {
+                        repository.registerOwnerToken(userToken, email)
+                        repository.changeRestaurantToken(userToken, email)
+                    } catch (e: Exception) { }
                 }
             }
         }
