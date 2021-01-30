@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -53,8 +54,9 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as AppCompatActivity).supportActionBar?.show()
+
         if(args.resId.isNotEmpty()) {
-            Log.d(TAG, "***********second page onViewCreated: ${args.resId}")
             model.getRestaurantById(args.resId)
             subscribeToObservers()
         }

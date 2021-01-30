@@ -11,6 +11,7 @@ import com.example.food2you_restaurantsonly.data.remote.PushNotification
 import com.example.food2you_restaurantsonly.data.remote.UserToken
 import com.example.food2you_restaurantsonly.data.remote.requests.AccountRequest
 import com.example.food2you_restaurantsonly.data.remote.requests.DeleteFoodRequest
+import com.example.food2you_restaurantsonly.data.remote.requests.RegisterUserRequest
 import com.example.food2you_restaurantsonly.data.remote.requests.UpdateOrderStatusRequest
 import com.example.food2you_restaurantsonly.other.Resource
 import com.example.food2you_restaurantsonly.other.checkForInternetConnection
@@ -29,9 +30,9 @@ class Repository
     private val firebaseApi: FirebaseApi
 ) {
 
-    suspend fun register(email: String, password: String) = withContext(Dispatchers.IO) {
+    suspend fun register(email: String, password: String, token: String) = withContext(Dispatchers.IO) {
         try {
-            val response = api.registerRestaurant(AccountRequest(email, password))
+            val response = api.registerRestaurant(RegisterUserRequest(email, password, token))
             if(response.isSuccessful && response.body()!!.isSuccessful) {
                 Resource.success(response.body()?.message)
             }

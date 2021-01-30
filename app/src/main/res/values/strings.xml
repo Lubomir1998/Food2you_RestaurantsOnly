@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Food2you_RestaurantsOnly</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

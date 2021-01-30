@@ -9,6 +9,30 @@
         app:launchSingleTop="true"
         />
 
+    <action
+        android:id="@+id/action_launch_add_restaurant_fragment"
+        app:destination="@+id/addRestaurantFragment"
+        app:launchSingleTop="true"
+        />
+
+    <action
+        android:id="@+id/action_launch_login_fragment"
+        app:destination="@+id/loginFragment"
+        app:launchSingleTop="true"
+        />
+
+    <action
+        android:id="@+id/action_launch_preview_fragment"
+        app:destination="@+id/previewsFragment"
+        app:launchSingleTop="true"
+        />
+
+    <action
+        android:id="@+id/action_launch_starting_fragment"
+        app:destination="@+id/myRestaurantsFragment"
+        app:launchSingleTop="true"
+        />
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.food2you_restaurantsonly.ui.LoginFragment"
@@ -95,4 +119,8 @@
             app:argType="string"
             android:defaultValue=""/>
     </fragment>
+    <fragment
+        android:id="@+id/previewsFragment"
+        android:name="com.example.food2you_restaurantsonly.ui.PreviewsFragment"
+        android:label="PreviewsFragment" />
 </navigation>

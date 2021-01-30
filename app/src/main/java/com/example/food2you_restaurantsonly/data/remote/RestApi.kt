@@ -3,10 +3,7 @@ package com.example.food2you_restaurantsonly.data.remote
 import com.example.food2you_restaurantsonly.data.local.entities.Food
 import com.example.food2you_restaurantsonly.data.local.entities.Order
 import com.example.food2you_restaurantsonly.data.local.entities.Restaurant
-import com.example.food2you_restaurantsonly.data.remote.requests.AccountRequest
-import com.example.food2you_restaurantsonly.data.remote.requests.DeleteFoodRequest
-import com.example.food2you_restaurantsonly.data.remote.requests.DeleteRestaurantRequest
-import com.example.food2you_restaurantsonly.data.remote.requests.UpdateOrderStatusRequest
+import com.example.food2you_restaurantsonly.data.remote.requests.*
 import com.example.food2you_restaurantsonly.data.remote.responses.SimpleResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -18,7 +15,7 @@ import retrofit2.http.Path
 interface RestApi {
 
     @POST("/registerRestaurant")
-    suspend fun registerRestaurant(@Body accountRequest: AccountRequest): Response<SimpleResponse>
+    suspend fun registerRestaurant(@Body registerUserRequest: RegisterUserRequest): Response<SimpleResponse>
 
     @POST("/loginRes")
     suspend fun loginRes(@Body accountRequest: AccountRequest): Response<SimpleResponse>

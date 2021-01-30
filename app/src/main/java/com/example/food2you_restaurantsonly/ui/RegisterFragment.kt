@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
@@ -17,6 +18,7 @@ import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
 import com.example.food2you_restaurantsonly.other.Constants
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
+import com.example.food2you_restaurantsonly.other.Constants.KEY_TOKEN
 import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
 import com.example.food2you_restaurantsonly.other.Status
@@ -57,6 +59,8 @@ class RegisterFragment: Fragment(R.layout.register_fragment) {
 
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+        (activity as AppCompatActivity).supportActionBar?.hide()
+
         if(isLoggedIn()) {
             authenticateApi(currentEmail ?: "", currentPassword ?: "")
             redirectLogin()
@@ -73,11 +77,12 @@ class RegisterFragment: Fragment(R.layout.register_fragment) {
             val email = binding.userNameEt.text.toString()
             val password = binding.passwordEt.text.toString()
             val confirmPassword = binding.confirmPasswordEt.text.toString()
+            val token = sharedPrefs.getString(KEY_TOKEN, "") ?: ""
 
             currentEmail = email
             currentPassword = password
 
-            model.registerRestaurantOwner(email, password, confirmPassword)
+            model.registerRestaurantOwner(email, password, confirmPassword, token)
         }
 
 

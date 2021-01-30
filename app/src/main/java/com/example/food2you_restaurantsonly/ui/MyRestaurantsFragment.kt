@@ -3,8 +3,8 @@ package com.example.food2you_restaurantsonly.ui
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
@@ -15,13 +15,14 @@ import com.example.food2you_restaurantsonly.databinding.MyRestaurantsFragmentBin
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.KEY_NAME
 import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
+import com.example.food2you_restaurantsonly.other.Constants.KEY_RES_ID
 import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
 import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import java.security.acl.NotOwnerException
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,7 +42,6 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        setHasOptionsMenu(true)
         binding = MyRestaurantsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -51,6 +51,8 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
 
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
+        (activity as AppCompatActivity).supportActionBar?.show()
+
         if(sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) != NO_EMAIL) {
             val email = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: ""
             model.getRestaurantByOwner(sharedPrefs.getString(KEY_EMAIL, "") ?: "")
@@ -59,15 +61,15 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
         }
 
 
-        binding.addRestaurantImg.setOnClickListener {
-            val action = MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToAddRestaurantFragment(currentRestaurant?.id ?: "")
-            findNavController().navigate(action)
-        }
-
-        binding.resImg.setOnClickListener {
-            val action = MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToOrderFragment(currentRestaurant?.name ?: "")
-            findNavController().navigate(action)
-        }
+//        binding.addRestaurantImg.setOnClickListener {
+//            val action = MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToAddRestaurantFragment(currentRestaurant?.id ?: "")
+//            findNavController().navigate(action)
+//        }
+//
+//        binding.resImg.setOnClickListener {
+//            val action = MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToOrderFragment(currentRestaurant?.name ?: "")
+//            findNavController().navigate(action)
+//        }
 
     }
 
@@ -85,54 +87,26 @@ class MyRestaurantsFragment: Fragment(R.layout.my_restaurants_fragment) {
                         val restaurant = result.data
                         currentRestaurant = restaurant
 
+                        sharedPrefs.edit().putString(KEY_RES_ID, currentRestaurant?.id).apply()
+                        sharedPrefs.edit().putString(KEY_NAME, currentRestaurant?.name).apply()
+
                         Picasso.with(requireContext()).load(currentRestaurant?.imgUrl).into(binding.resImg)
                         binding.resNameTextView.text = currentRestaurant?.name
 
                     }
                     Status.ERROR -> {
-
+                        event.getContentIfNotHandled()?.let {
+                            Snackbar.make(requireView(), it.message ?: "An error occurred", Snackbar.LENGTH_LONG).show()
+                        }
 
                     }
-                    Status.LOADING -> {
-
-                    }
+                    Status.LOADING -> {  }
                 }
 
             }
         })
     }
 
-    private fun logOut() {
 
-        model.deleteFood()
-        model.deleteRestaurant()
-
-        sharedPrefs.edit()
-            .putString(KEY_EMAIL, NO_EMAIL)
-            .putString(KEY_PASSWORD, NO_PASSWORD)
-            .putString(KEY_NAME, "")
-            .apply()
-
-        val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.myRestaurantsFragment, true)
-            .build()
-
-        findNavController().navigate(MyRestaurantsFragmentDirections.actionMyRestaurantsFragmentToLoginFragment(), navOptions)
-    }
-
-
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_restaurants, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.miLogout -> logOut()
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
 
 }

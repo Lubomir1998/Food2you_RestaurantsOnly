@@ -22,7 +22,7 @@ class AuthViewModel @ViewModelInject constructor(private val repository: Reposit
 
 
 
-    fun registerRestaurantOwner(email: String, password: String, confirmPassword: String) {
+    fun registerRestaurantOwner(email: String, password: String, confirmPassword: String, token: String) {
         _registerStatus.postValue(Resource.loading(null))
 
         if(email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
@@ -48,7 +48,7 @@ class AuthViewModel @ViewModelInject constructor(private val repository: Reposit
             return
         }
         viewModelScope.launch {
-            val result = repository.register(email, password)
+            val result = repository.register(email, password, token)
             _registerStatus.postValue(result)
         }
 
