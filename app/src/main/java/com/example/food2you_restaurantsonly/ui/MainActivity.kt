@@ -8,18 +8,14 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.example.food2you_restaurantsonly.NavGraphDirections
 import com.example.food2you_restaurantsonly.R
 import com.example.food2you_restaurantsonly.Repository
-import com.example.food2you_restaurantsonly.data.remote.PushNotification
 import com.example.food2you_restaurantsonly.data.remote.UserToken
 import com.example.food2you_restaurantsonly.databinding.ActivityMainBinding
 import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
-import com.example.food2you_restaurantsonly.other.Constants
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.KEY_NAME
 import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
@@ -30,6 +26,7 @@ import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
 import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,6 +48,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val email = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
+        var emailTopic = ""
+
+        if(email.isNotEmpty() && email != NO_EMAIL) {
+            emailTopic = email.replace("[^A-Za-z0-9.]".toRegex(), "-")
+        }
+
+        if(emailTopic.isNotEmpty()) {
+            FirebaseMessaging.getInstance().subscribeToTopic("/topics/$emailTopic")
+        }
 
         toggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open, R.string.close)
         binding.drawerLayout.addDrawerListener(toggle)
@@ -90,11 +98,11 @@ class MainActivity : AppCompatActivity() {
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
             sharedPrefs.edit().putString(KEY_TOKEN, it.token).apply()
 
-            val email = sharedPrefs.getString(KEY_EMAIL, "") ?: ""
+            val email = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
             val userToken = UserToken(it.token)
             sharedPrefs.edit().putString(KEY_TOKEN, it.token).apply()
 
-            if(email.isNotEmpty()) {
+            if(email.isNotEmpty() && email != NO_EMAIL) {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         repository.registerOwnerToken(userToken, email)
@@ -151,6 +159,9 @@ class MainActivity : AppCompatActivity() {
 
         model.deleteFood()
         model.deleteRestaurant()
+
+        val restaurantName = sharedPrefs.getString(KEY_NAME, "") ?: ""
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("/topics/$restaurantName")
 
         sharedPrefs.edit()
                 .putString(KEY_EMAIL, NO_EMAIL)

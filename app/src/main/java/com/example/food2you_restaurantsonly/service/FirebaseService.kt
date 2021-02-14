@@ -19,6 +19,7 @@ import com.example.food2you_restaurantsonly.other.Constants.CHANNEL_ID
 import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
 import com.example.food2you_restaurantsonly.other.Constants.KEY_TOKEN
 import com.example.food2you_restaurantsonly.other.Constants.NOTIFICATION_TAP
+import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
 import com.example.food2you_restaurantsonly.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -41,11 +42,12 @@ class FirebaseService: FirebaseMessagingService() {
     override fun onNewToken(newToken: String) {
         super.onNewToken(newToken)
 
-        val email = sharedPrefs.getString(KEY_EMAIL, "") ?: ""
+        val email = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
+
         val userToken = UserToken(newToken)
         sharedPrefs.edit().putString(KEY_TOKEN, newToken).apply()
 
-        if(email.isNotEmpty()) {
+        if(email.isNotEmpty() && email != NO_EMAIL) {
             CoroutineScope(Dispatchers.IO).launch {
                 repository.registerOwnerToken(userToken, email)
                 repository.changeRestaurantToken(userToken, email)
@@ -58,6 +60,10 @@ class FirebaseService: FirebaseMessagingService() {
     @SuppressLint("InvalidWakeLockTag")
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+
+        val email = sharedPrefs.getString(KEY_EMAIL, "") ?: ""
+
+        if(email == NO_EMAIL || email.isEmpty()) return
 
         // wake the screen after receiving the notification
         val pm = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager

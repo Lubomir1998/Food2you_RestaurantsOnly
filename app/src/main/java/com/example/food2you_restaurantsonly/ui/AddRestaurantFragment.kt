@@ -25,6 +25,7 @@ import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.other.checkForInternetConnection
 import com.example.food2you_restaurantsonly.viewmodels.AddRestaurantViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
@@ -115,7 +116,7 @@ class AddRestaurantFragment: Fragment(R.layout.add_restaurant_fragment) {
                 }
 
                 if(checkForInternetConnection(requireContext())) {
-                    if(owner != NO_EMAIL) {
+                    if(owner != NO_EMAIL && owner.isNotEmpty()) {
                         model.saveRestaurant(restaurant)
                         sharedPrefs.edit().putString(KEY_NAME, restaurant.name).apply()
                         Snackbar.make(requireView(), "Restaurant Saved", Snackbar.LENGTH_LONG).show()

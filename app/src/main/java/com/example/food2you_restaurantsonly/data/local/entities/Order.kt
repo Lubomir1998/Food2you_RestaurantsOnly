@@ -10,11 +10,14 @@ data class Order(
     var address: String = "",
     var recipient: String = "",
     var email: String = "",
-    var phoneNumber: Long = 0L,
+    var phoneNumber: String = "",
     var food: List<FoodItem> = listOf(),
     var price: Float = 0f,
     var timestamp: Long = 0L,
     var status: String = "",
+    val resImgUrl: String,
+    val restaurantName: String,
+    var resId: String = "",
     @PrimaryKey(autoGenerate = false)
     val id: String = UUID.randomUUID().toString()
 )

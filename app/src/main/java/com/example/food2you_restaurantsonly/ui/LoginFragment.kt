@@ -16,7 +16,11 @@ import com.example.food2you_restaurantsonly.data.remote.UserToken
 import com.example.food2you_restaurantsonly.databinding.LoginFragmentBinding
 import com.example.food2you_restaurantsonly.other.BasicAuthInterceptor
 import com.example.food2you_restaurantsonly.other.Constants
+import com.example.food2you_restaurantsonly.other.Constants.KEY_EMAIL
+import com.example.food2you_restaurantsonly.other.Constants.KEY_PASSWORD
 import com.example.food2you_restaurantsonly.other.Constants.KEY_TOKEN
+import com.example.food2you_restaurantsonly.other.Constants.NO_EMAIL
+import com.example.food2you_restaurantsonly.other.Constants.NO_PASSWORD
 import com.example.food2you_restaurantsonly.other.Status
 import com.example.food2you_restaurantsonly.viewmodels.AuthViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -83,10 +87,10 @@ class LoginFragment: Fragment(R.layout.login_fragment) {
 
 
     private fun isLoggedIn(): Boolean {
-        currentEmail = sharedPrefs.getString(Constants.KEY_EMAIL, Constants.NO_EMAIL) ?: Constants.NO_EMAIL
-        currentPassword = sharedPrefs.getString(Constants.KEY_PASSWORD, Constants.NO_PASSWORD) ?: Constants.NO_PASSWORD
+        currentEmail = sharedPrefs.getString(KEY_EMAIL, NO_EMAIL) ?: NO_EMAIL
+        currentPassword = sharedPrefs.getString(KEY_PASSWORD, NO_PASSWORD) ?: NO_PASSWORD
 
-        return currentEmail != Constants.NO_EMAIL && currentPassword != Constants.NO_PASSWORD
+        return currentEmail != NO_EMAIL && currentPassword != NO_PASSWORD
     }
 
     private fun authenticateApi(email: String, password: String) {
@@ -114,8 +118,8 @@ class LoginFragment: Fragment(R.layout.login_fragment) {
                         Snackbar.make(requireView(), "Successfully logged in", Snackbar.LENGTH_LONG).show()
 
                         sharedPrefs.edit()
-                            .putString(Constants.KEY_EMAIL, currentEmail)
-                            .putString(Constants.KEY_PASSWORD, currentPassword)
+                            .putString(KEY_EMAIL, currentEmail)
+                            .putString(KEY_PASSWORD, currentPassword)
                             .apply()
 
                         authenticateApi(currentEmail ?: "", currentPassword ?: "")
@@ -134,7 +138,7 @@ class LoginFragment: Fragment(R.layout.login_fragment) {
 
                     Status.ERROR -> {
                         binding.progressBar2.visibility = View.GONE
-                        Snackbar.make(requireView(), result.message ?: "An unknown error occured", Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(requireView(), result.message ?: "An unknown error occurred", Snackbar.LENGTH_LONG).show()
                     }
 
                     Status.LOADING -> {

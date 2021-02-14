@@ -36,7 +36,7 @@ class OrderAdapter(private val listener: OnOrderClickListener): RecyclerView.Ada
 
         holder.apply {
             addressTv.text = order.address
-            phoneNumberTv.text = order.phoneNumber.toString()
+            phoneNumberTv.text = order.phoneNumber
 
             val foods = order.food
             var text = ""
